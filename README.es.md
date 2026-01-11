@@ -1,7 +1,12 @@
 # API de Red Social — Flask & SQLAlchemy
 
+
 Este proyecto define un **modelo de datos** para una aplicación de tipo **red social**, inspirada en plataformas como Instagram, utilizando **Flask** y **SQLAlchemy**.  
 Incluye usuarios, publicaciones, comentarios, archivos multimedia y un sistema de seguidores.
+
+El ejemplo en Google Sheets de las tablas es el siguiente:
+
+![Conjunto de 5 tablas con la información del modelos de datos para una red social tipo Instagram. Contiene una tabla con la información de usuario, una para los archivos, otra para los post, otra para los comentarios y una última para hacer la relación entre usuarios seguidos y sus seguidores](https://i.ibb.co/cSpmkrXc/Captura-de-pantalla-2026-01-11-085141.png "Modelo de datos Instagram")
 
 El objetivo principal es **practicar relaciones entre tablas** (uno a muchos y muchos a muchos).
 
