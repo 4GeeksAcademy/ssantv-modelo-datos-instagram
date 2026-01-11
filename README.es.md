@@ -1,76 +1,134 @@
-<a href="https://www.breatheco.de"><img height="280" align="right" src="https://github.com/4GeeksAcademy/flask-rest-hello/blob/main/docs/assets/badge.png?raw=true"></a>
+# API de Red Social — Flask & SQLAlchemy
 
-# Plantilla de Flask para Desarrolladores Junior
+Este proyecto define un **modelo de datos** para una aplicación de tipo **red social**, inspirada en plataformas como Instagram, utilizando **Flask** y **SQLAlchemy**.  
+Incluye usuarios, publicaciones, comentarios, archivos multimedia y un sistema de seguidores.
 
-Crea API's con Flask en minutos, [📹 mira el tutorial en video](https://youtu.be/ORxQ-K3BzQA).
+El objetivo principal es **practicar relaciones entre tablas** (uno a muchos y muchos a muchos).
 
-- [Documentación extensa aquí](https://start.4geeksacademy.com).
-- Integrado con Pipenv para la gestión de paquetes.
-- Despliegue rápido a render.com o heroku con `$ pipenv run deploy`.
-- Uso de archivo `.env`.
-- Integración de SQLAlchemy para la abstracción de bases de datos.
+---
 
-## 1) Instalación
+## Tecnologías utilizadas
 
-Esta plantilla se instala en unos segundos si la abres gratis con Codespaces (recomendado) o Gitpod.
-Omite estos pasos de instalación y salta al paso 2 si decides usar cualquiera de esos servicios.
+- Python
+- Flask
+- Flask-SQLAlchemy
+- SQLAlchemy ORM
 
-> Importante: La plantilla está hecha para python 3.10 pero puedes cambiar la `python_version` en el Pipfile.
+---
 
-Los siguientes pasos se ejecutan automáticamente dentro de gitpod, si estás haciendo una instalación local debes hacerlos manualmente:
+## Estructura del modelo de datos
 
-```sh
-pipenv install;
-psql -U root -c 'CREATE DATABASE example;'
-pipenv run init;
-pipenv run migrate;
-pipenv run upgrade;
-```
+La aplicación se compone de los siguientes modelos:
 
-> Nota: Los usuarios de Codespaces pueden conectarse a psql escribiendo: `psql -h localhost -U gitpod example`
+- User
+- Post
+- Media
+- Comment
+- Follows
 
-## 2) Cómo empezar a codificar
+---
 
-Hay una API de ejemplo funcionando con una base de datos de ejemplo. Todo tu código de aplicación debe escribirse dentro de la carpeta `./src/`.
+## Modelos y relaciones
 
-- src/main.py (aquí es donde debes codificar tus endpoints)
-- src/models.py (tus tablas de base de datos y lógica de serialización)
-- src/utils.py (algunas clases y funciones reutilizables)
-- src/admin.py (agrega tus modelos al administrador y gestiona tus datos fácilmente)
+### 1. User (Usuario)
 
-Para una explicación más detallada, busca el tutorial dentro de la carpeta `docs`.
+Representa a los usuarios registrados en la plataforma.
 
-## Recuerda migrar cada vez que cambies tus modelos
+**Campos principales:**
+- `id`
+- `user_name` (único)
+- `name`
+- `last_name`
+- `email` (único)
+- `password`
+- `is_active`
 
-Debes migrar y actualizar las migraciones por cada actualización que hagas a tus modelos:
+**Relaciones:**
+- Un usuario puede:
+  - Tener muchos posts
+  - Escribir muchos comentarios
+  - Seguir a otros usuarios
+  - Ser seguido por otros usuarios
 
-```bash
-$ pipenv run migrate # (para hacer las migraciones)
-$ pipenv run upgrade  # (para actualizar tu base de datos con las migraciones)
-```
+---
 
-## Generar un diagrama de la base de datos
+### 2. Post (Publicación)
 
-Si deseas visualizar la estructura de tu base de datos en forma de diagrama, puedes generarlo con el siguiente comando:
+Representa las publicaciones creadas por los usuarios.
 
-```bash
-$ pipenv run diagram
-```
+**Campos principales:**
+- `id`
+- `description`
+- `user_id` (FK)
 
-Este comando generará un archivo con el diagrama de la base de datos basado en los modelos definidos en `src/models.py`.
+**Relaciones:**
+- Un post:
+  - Pertenece a un usuario
+  - Puede tener muchos comentarios
+  - Puede tener muchos archivos multimedia
 
-## Verifica tu API en vivo
+---
 
-1. Una vez que ejecutes el comando `pipenv run start` tu API comenzará a ejecutarse en vivo y podrás abrirla haciendo clic en la pestaña "ports" y luego haciendo clic en "open browser".
+### 3. Media (Multimedia)
 
-> ✋ Si estás trabajando en una nube de codificación como [Codespaces](https://docs.github.com/en/codespaces/developing-in-codespaces/forwarding-ports-in-your-codespace#sharing-a-port) o [Gitpod](https://www.gitpod.io/docs/configure/workspaces/ports#configure-port-visibility) asegúrate de que tu puerto reenviado sea público.
+Representa los archivos multimedia asociados a una publicación (imagen, vídeo, etc.).
 
-## Publica/Despliega tu sitio web!
+**Campos principales:**
+- `id`
+- `type`
+- `url`
+- `post_id` (FK)
 
-Esta plantilla está 100% lista para desplegarse con Render.com y Heroku en cuestión de minutos. Por favor lee la [documentación oficial al respecto](https://start.4geeksacademy.com/deploy).
+**Relaciones:**
+- Cada archivo multimedia pertenece a un post
+- Se considera que si se sube un mismo archivo más de una vez, serán tratados como diferentes
 
-### Contribuidores
+---
 
-Esta plantilla fue construida como parte del [Bootcamp de Codificación](https://4geeksacademy.com/us/coding-bootcamp) de 4Geeks Academy por [Alejandro Sanchez](https://twitter.com/alesanchezr) y muchos otros contribuidores. Descubre más sobre nuestro [Curso de Desarrollador Full Stack](https://4geeksacademy.com/us/coding-bootcamps/part-time-full-stack-developer), y [Bootcamp de Ciencia de Datos](https://4geeksacademy.com/us/coding-bootcamps/datascience-machine-learning).
+### 4. Comment (Comentario)
 
-Puedes encontrar otras plantillas y recursos como este en la [página de github de la escuela](https://github.com/4geeksacademy/).
+Representa los comentarios que los usuarios realizan en las publicaciones.
+
+**Campos principales:**
+- `id`
+- `date`
+- `text`
+- `user_id` (FK)
+- `post_id` (FK)
+
+**Relaciones:**
+- Un comentario:
+  - Pertenece a un usuario
+  - Pertenece a un post
+
+---
+
+### 5. Follows (Seguidores)
+
+Gestiona la relación de seguidores y seguidos entre usuarios.
+
+Este modelo permite representar una relación **muchos a muchos** entre usuarios, incluyendo información adicional como la fecha del seguimiento.
+
+**Campos principales:**
+- `id`
+- `date`
+- `follower_id` (FK a User)
+- `followed_id` (FK a User)
+
+**Relaciones:**
+- Un usuario puede:
+  - Seguir a muchos usuarios
+  - Ser seguido por muchos usuarios
+
+---
+
+## Relaciones implementadas
+
+- **Uno a muchos**
+  - User → Post
+  - User → Comment
+  - Post → Comment
+  - Post → Media
+
+- **Muchos a muchos**
+  - User ↔ User (a través de `Follows`)
