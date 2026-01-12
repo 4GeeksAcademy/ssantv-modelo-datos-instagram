@@ -21,9 +21,10 @@ class User(db.Model):
     # Es padre de:
     posts: Mapped[List["Post"]] = relationship(back_populates="user")
     comments: Mapped[List["Comment"]] = relationship(back_populates="user")
-    followers: Mapped[List["Follows"]] = relationship(back_populates="followed_user")
-    following: Mapped[List["Follows"]] = relationship(back_populates="follower_user")
-
+    followers: Mapped[List["Follows"]] = relationship(foreign_keys="Follows.followed_id", back_populates="followed_user")
+    following: Mapped[List["Follows"]] = relationship(foreign_keys="Follows.follower_id", back_populates="follower_user")
+    
+    # Añadir FK foreign_keys="a followers y following"
     def serialize(self):
         return {
             "id": self.id,
@@ -43,7 +44,7 @@ class Post(db.Model):
     description: Mapped[str] = mapped_column(String(120), nullable=False)
 
     # Hijo de:
-    user: Mapped["User"] = relationship(back_populates="users")
+    user: Mapped["User"] = relationship(back_populates="posts")
 
     # Padre de:
     medias: Mapped[List["Media"]] = relationship(back_populates="post")
@@ -104,10 +105,11 @@ class Follows(db.Model):
     followed_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
 
     # Hijo de:
-    user: Mapped["User"] = relationship(back_populates="followers")
-    user: Mapped["User"] = relationship(back_populates="following")
+    follower_user: Mapped["User"] = relationship(foreign_keys=[follower_id],back_populates="following")
+    followed_user: Mapped["User"] = relationship(foreign_keys=[followed_id],back_populates="followers")
 
 
+    # Añadir FK foreign_keys="a follower_user y followed_user"
     def serialize(self):
         return {
             "id": self.id,
@@ -115,4 +117,3 @@ class Follows(db.Model):
             "followed_id": self.followed_id,
             "follower_id": self.follower_id
         }
-
